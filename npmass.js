@@ -78,6 +78,7 @@ if (parsedArgs.options.print)
 
 if (parsedArgs.options.run) {
     const cmd = evpkg.scripts[parsedArgs.options.run];
+    console.log(cmd);
     const args = cmd.split(" ");
     const spwn = args.shift();
     const prc = ChildProcess.spawn(spwn, args);
