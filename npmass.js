@@ -8,7 +8,8 @@ const parsedArgs = GetOpt.create([
     ["h", "help", "shows help"],
     ["o", "overwrite=ARG+", "custom argument overwrite"],
     ["p", "print", "print evaluated package.json"],
-    ["r", "run=NAME", "run a script"]
+    ["r", "run=NAME", "run a script"],
+    ["i", "increaseversion", "increase package version"]
 ]).bindHelp().parseSystem();
 
 var customArgs = {};
@@ -84,4 +85,16 @@ if (parsedArgs.options.run) {
     const prc = ChildProcess.spawn(spwn, args);
     prc.stderr.pipe(process.stderr);
     prc.stdout.pipe(process.stdout);
+}
+
+if (parsedArgs.options.increaseversion) {
+    const last = JSON.parse(ChildProcess.execSync("git show HEAD:package.json") + "");
+    if (pkg.version === last.version) {
+        const version = pkg.version.split(".");
+        var revision = parseInt(version.pop(), 10);
+        revision += 1;
+        version.push(revision + "");
+        pkg.version = version.join(".");
+        FS.writeFileSync("package.json", JSON.stringify(pkg, "", 4));
+    }
 }
