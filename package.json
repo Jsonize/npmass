@@ -1,7 +1,7 @@
 {
 	"name": "npmass",
 	"description": "NPMASS is an assistant to NPM, mostly for running better scripts.",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"author": "Ziggeo",
 	"repository": "https://github.com/jsonize/npmass",
 	"license": "Apache-2.0",
@@ -13,8 +13,9 @@
 	},
 	"preferGlobal": true,
 	"dependencies": {
-		"node-getopt": "~0.2.3",
-		"lodash.template": "~4.5.0"
+		"extend": "^3.0.2",
+		"lodash.template": "~4.5.0",
+		"node-getopt": "~0.2.3"
 	},
 	"files": [
 		"npmass.js",

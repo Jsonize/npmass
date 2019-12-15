@@ -2,6 +2,7 @@ const GetOpt = require("node-getopt");
 const FS = require("fs");
 const Template = require('lodash.template');
 const ChildProcess = require("child_process");
+const Extend = require("extend");
 
 
 const parsedArgs = GetOpt.create([
@@ -18,7 +19,16 @@ var customArgs = {};
     customArgs[splt.shift()] = splt.join(":");
 });
 
-const pkg = JSON.parse(FS.readFileSync("package.json"));
+var pkg = JSON.parse(FS.readFileSync("package.json"));
+
+if (pkg.npmass) {
+    if (pkg.npmass.includes) {
+        pkg.npmass.includes.forEach(function (incl) {
+            if (FS.existsSync(incl))
+                pkg = Extend(pkg, JSON.parse(FS.readFileSync(incl)));
+        });
+    }
+}
 
 
 const objectMap = function (obj, f) {
