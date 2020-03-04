@@ -21,6 +21,18 @@ var customArgs = {};
 
 var pkg = JSON.parse(FS.readFileSync("package.json"));
 
+if (parsedArgs.options.increaseversion) {
+    const last = JSON.parse(ChildProcess.execSync("git show HEAD:package.json") + "");
+    if (pkg.version === last.version) {
+        const version = pkg.version.split(".");
+        var revision = parseInt(version.pop(), 10);
+        revision += 1;
+        version.push(revision + "");
+        pkg.version = version.join(".");
+        FS.writeFileSync("package.json", JSON.stringify(pkg, "", 4));
+    }
+}
+
 if (pkg.npmass) {
     if (pkg.npmass.includes) {
         pkg.npmass.includes.forEach(function (incl) {
@@ -92,19 +104,9 @@ if (parsedArgs.options.run) {
     console.log(cmd);
     const args = cmd.split(" ");
     const spwn = args.shift();
-    const prc = ChildProcess.spawn(spwn, args);
+    const prc = ChildProcess.spawn(spwn, args, {
+        shell: true
+    });
     prc.stderr.pipe(process.stderr);
     prc.stdout.pipe(process.stdout);
-}
-
-if (parsedArgs.options.increaseversion) {
-    const last = JSON.parse(ChildProcess.execSync("git show HEAD:package.json") + "");
-    if (pkg.version === last.version) {
-        const version = pkg.version.split(".");
-        var revision = parseInt(version.pop(), 10);
-        revision += 1;
-        version.push(revision + "");
-        pkg.version = version.join(".");
-        FS.writeFileSync("package.json", JSON.stringify(pkg, "", 4));
-    }
 }
