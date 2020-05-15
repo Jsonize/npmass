@@ -100,13 +100,22 @@ if (parsedArgs.options.print)
     console.log(evpkg);
 
 if (parsedArgs.options.run) {
-    const cmd = evpkg.scripts[parsedArgs.options.run];
+    let cmd = evpkg.scripts[parsedArgs.options.run];
     console.log(cmd);
-    const args = cmd.split(" ");
-    const spwn = args.shift();
-    const prc = ChildProcess.spawn(spwn, args, {
-        shell: true
-    });
-    prc.stderr.pipe(process.stderr);
-    prc.stdout.pipe(process.stdout);
+    const next = function (cmds) {
+        if (cmds.length > 0) {
+            let cmd = cmds.shift().trim();
+            let args = cmd.split(" ");
+            let spwn = args.shift();
+            let prc = ChildProcess.spawn(spwn, args, {
+                shell: true
+            });
+            prc.stderr.pipe(process.stderr);
+            prc.stdout.pipe(process.stdout);
+            prc.on("close", function () {
+                next(cmds);
+            });
+        }
+    };
+    next(cmd.split("&&"));
 }
