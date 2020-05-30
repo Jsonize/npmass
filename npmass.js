@@ -105,7 +105,9 @@ if (parsedArgs.options.run) {
     const next = function (cmds) {
         if (cmds.length > 0) {
             let cmd = cmds.shift().trim();
-            let args = cmd.split(" ");
+            var args = cmd.split(" ");
+            if (cmds.length === 0)
+                args = args.concat(parsedArgs.argv);
             let spwn = args.shift();
             let prc = ChildProcess.spawn(spwn, args, {
                 shell: true
