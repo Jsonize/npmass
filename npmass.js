@@ -21,6 +21,18 @@ var customArgs = {};
 
 var pkg = JSON.parse(FS.readFileSync("package.json"));
 
+if (pkg.npmass) {
+    if (pkg.npmass.increaseversion) {
+        parsedArgs.options.increaseversion = true;
+    }
+    if (pkg.npmass.includes) {
+        pkg.npmass.includes.forEach(function (incl) {
+            if (FS.existsSync(incl))
+                pkg = Extend(pkg, JSON.parse(FS.readFileSync(incl)));
+        });
+    }
+}
+
 if (parsedArgs.options.increaseversion) {
     const last = JSON.parse(ChildProcess.execSync("git show HEAD:package.json") + "");
     if (pkg.version === last.version) {
@@ -32,16 +44,6 @@ if (parsedArgs.options.increaseversion) {
         FS.writeFileSync("package.json", JSON.stringify(pkg, "", 4));
     }
 }
-
-if (pkg.npmass) {
-    if (pkg.npmass.includes) {
-        pkg.npmass.includes.forEach(function (incl) {
-            if (FS.existsSync(incl))
-                pkg = Extend(pkg, JSON.parse(FS.readFileSync(incl)));
-        });
-    }
-}
-
 
 const objectMap = function (obj, f) {
     if (typeof obj === "object") {
