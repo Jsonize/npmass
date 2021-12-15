@@ -1,20 +1,21 @@
-const GetOpt = require("node-getopt");
+const { program } = require("commander");
 const FS = require("fs");
 const Template = require('lodash.template');
 const ChildProcess = require("child_process");
 const Extend = require("extend");
 
 
-const parsedArgs = GetOpt.create([
-    ["h", "help", "shows help"],
-    ["o", "overwrite=ARG+", "custom argument overwrite"],
-    ["p", "print", "print evaluated package.json"],
-    ["r", "run=NAME", "run a script"],
-    ["i", "increaseversion", "increase package version"]
-]).bindHelp().parseSystem();
+program
+    .option("-o, --overwrite <arg...>", "custom argument overwrite")
+    .option("-p, --print", "print evaluated package.json")
+    .option("-r, --run <name>", "run a script")
+    .option("-i, --increaseversion", "increase package version");
+
+program.parse(process.argv);
+const options = program.opts();
 
 var customArgs = {};
-(parsedArgs.options.overwrite || []).forEach(function (keyvalue) {
+(options.overwrite || []).forEach(function (keyvalue) {
     var splt = keyvalue.split(":");
     customArgs[splt.shift()] = splt.join(":");
 });
@@ -23,7 +24,7 @@ var pkg = JSON.parse(FS.readFileSync("package.json"));
 
 if (pkg.npmass) {
     if (pkg.npmass.increaseversion) {
-        parsedArgs.options.increaseversion = true;
+        options.increaseversion = true;
     }
     if (pkg.npmass.includes) {
         pkg.npmass.includes.forEach(function (incl) {
@@ -33,7 +34,7 @@ if (pkg.npmass) {
     }
 }
 
-if (parsedArgs.options.increaseversion) {
+if (options.increaseversion) {
     const last = JSON.parse(ChildProcess.execSync("git show HEAD:package.json") + "");
     if (pkg.version === last.version) {
         const version = pkg.version.split(".");
@@ -98,18 +99,18 @@ const evpkg = objectEvaluation(pkg, {
 });
 
 
-if (parsedArgs.options.print)
+if (options.print)
     console.log(evpkg);
 
-if (parsedArgs.options.run) {
-    let cmd = evpkg.scripts[parsedArgs.options.run];
+if (options.run) {
+    let cmd = evpkg.scripts[options.run];
     console.log(cmd);
     const next = function (cmds) {
         if (cmds.length > 0) {
             let cmd = cmds.shift().trim();
             var args = cmd.split(" ");
             if (cmds.length === 0)
-                args = args.concat(parsedArgs.argv);
+                args = args.concat(program.args);
             let spwn = args.shift();
             let prc = ChildProcess.spawn(spwn, args, {
                 shell: true
