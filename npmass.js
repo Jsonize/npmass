@@ -26,12 +26,6 @@ if (pkg.npmass) {
     if (pkg.npmass.increaseversion) {
         options.increaseversion = true;
     }
-    if (pkg.npmass.includes) {
-        pkg.npmass.includes.forEach(function (incl) {
-            if (FS.existsSync(incl))
-                pkg = Extend(pkg, JSON.parse(FS.readFileSync(incl)));
-        });
-    }
 }
 
 if (options.increaseversion) {
@@ -43,6 +37,15 @@ if (options.increaseversion) {
         version.push(revision + "");
         pkg.version = version.join(".");
         FS.writeFileSync("package.json", JSON.stringify(pkg, "", 4));
+    }
+}
+
+if (pkg.npmass) {
+    if (pkg.npmass.includes) {
+        pkg.npmass.includes.forEach(function (incl) {
+            if (FS.existsSync(incl))
+                pkg = Extend(pkg, JSON.parse(FS.readFileSync(incl)));
+        });
     }
 }
 
