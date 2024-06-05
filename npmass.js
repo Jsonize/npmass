@@ -120,7 +120,9 @@ if (options.run) {
             });
             prc.stderr.pipe(process.stderr);
             prc.stdout.pipe(process.stdout);
-            prc.on("close", function () {
+            prc.on("close", function (code) {
+                if (code > 0)
+                    process.exit(0);
                 next(cmds);
             });
         }
