@@ -1,7 +1,7 @@
 {
     "name": "npmass",
     "description": "NPMASS is an assistant to NPM, mostly for running better scripts.",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "author": "Ziggeo",
     "repository": "https://github.com/jsonize/npmass",
     "license": "Apache-2.0",
